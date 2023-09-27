@@ -26,23 +26,31 @@ notes.get("/:note_id", (req, res) => {
 notes.post("/", (req, res) => {
   const { title, text } = req.body;
   if (req.body) {
-    const newNote = {
-      title,
-      text,
-      id: uuidv4(),
-    };
-    readAndAppend(newNote, "./db/db.json");
-    res.json("Note added successfully 👌🏻");
+      const newNote = {
+          title,
+          text,
+          id: uuidv4(),
+      };
+      readAndAppend(newNote, "./db/db.json");
+      // After appending the new note, send back the updated list
+      readFromFile("./db/db.json")
+          .then(data => res.json(JSON.parse(data)))
+          .catch(err => res.status(500).json({ error: 'Failed to fetch updated notes' }));
   } else {
-    res.status(400).json({ error: "Error in adding note" });
+      res.status(400).json({ error: "Error in adding note" });
   }
 });
+
 
 // DELETE route to remove a note by ID
 notes.delete("/:note_id", (req, res) => {
   const noteId = req.params.note_id;
   readAndDelete(noteId, "./db/db.json");
-  res.json({ status: "Note deleted successfully", body: noteId });
+  // After deleting the note, send back the updated list
+  readFromFile("./db/db.json")
+      .then(data => res.json(JSON.parse(data)))
+      .catch(err => res.status(500).json({ error: 'Failed to fetch updated notes' }));
 });
+
 
 module.exports = notes;
