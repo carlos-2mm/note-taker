@@ -22,24 +22,35 @@ notes.get("/:note_id", (req, res) => {
     });
 });
 
-notes.post('/', (req, res) => {
-    console.log(req.body);
-  
-    const { title, text } = req.body;
-  
-    if (req.body) {
-      const newNote = {
-        title,
-        text,
-        id: uuidv4(),
-      };
-  
-      readAndAppend(newNote, './db/db.json');
-      res.json(`Note added successfully 👌🏻`);
-    } else {
-      res.error('Error in adding note');
-    }
-  });
+notes.post("/", (req, res) => {
+  console.log(req.body);
 
+  const { title, text } = req.body;
+
+  if (req.body) {
+    const newNote = {
+      title,
+      text,
+      id: uuidv4(),
+    };
+
+    readAndAppend(newNote, "./db/db.json");
+    res.json(`Note added successfully 👌🏻`);
+  } else {
+    res.error("Error in adding note");
+  }
+});
+
+notes.delete("/notes/:id", (req, res) => {
+  const noteId = req.params.id;
+
+  readAndDelete(noteId, "./db/db.json");
+
+  const response = {
+    status: "Note deleted successfully",
+    body: noteId,
+  };
+  res.json(response);
+});
 
 module.exports = notes;
