@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const {
   readFromFile,
   readAndAppend,
-  writeToFile,
+  readAndDelete,
 } = require("../helpers/fsUtils");
 
 notes.get("/", (req, res) => {
@@ -23,34 +23,32 @@ notes.get("/:note_id", (req, res) => {
 });
 
 notes.post("/", (req, res) => {
-  console.log(req.body);
+    const { title, text } = req.body;
+  
+    if (req.body) {
+      const newNote = {
+        title,
+        text,
+        id: uuidv4(),
+      };
+  
+      readAndAppend(newNote, "./db/db.json");
+      res.json(`Note added successfully 👌🏻`);
+    } else {
+      res.status(400).json({ error: "Error in adding note" });
+    }
+  });
 
-  const { title, text } = req.body;
-
-  if (req.body) {
-    const newNote = {
-      title,
-      text,
-      id: uuidv4(),
+notes.delete("/:note_id", (req, res) => {
+    const noteId = req.params.note_id;
+  
+    readAndDelete(noteId, "./db/db.json");
+  
+    const response = {
+      status: "Note deleted successfully",
+      body: noteId,
     };
-
-    readAndAppend(newNote, "./db/db.json");
-    res.json(`Note added successfully 👌🏻`);
-  } else {
-    res.error("Error in adding note");
-  }
-});
-
-notes.delete("/notes/:id", (req, res) => {
-  const noteId = req.params.id;
-
-  readAndDelete(noteId, "./db/db.json");
-
-  const response = {
-    status: "Note deleted successfully",
-    body: noteId,
-  };
-  res.json(response);
-});
+    res.json(response);
+  });
 
 module.exports = notes;
