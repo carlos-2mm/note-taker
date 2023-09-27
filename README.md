@@ -24,7 +24,7 @@ N/A
 
 ## Usage
 
-Click on the provided Heroku link to open the application: [Note Taker]().
+Click on the provided Heroku link to open the application: [Note Taker](https://notes-take-1152aec0eda6.herokuapp.com/).
 
 ### To use the Note Taker application:
 1. Access the application via the provided Heroku link.
